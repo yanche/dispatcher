@@ -46,7 +46,7 @@ class Dispatcher {
             }
             else {
                 ctx.status = 400;
-                ctx.message = `content type is not acceptable: ${ctx.header['content-type']}`;
+                ctx.message = `content type is not acceptable: ${ctx.header["content-type"]}`;
             }
         });
         koa.use(async (ctx, next) => {

@@ -62,12 +62,12 @@ export const constraints = {
 }
 
 export const cond = {
-    ok: 'ok',
-    success: 'success',
-    complete: 'complete',
-    timer: 'timer',
-    and: 'and',
-    or: 'or'
+    ok: "ok",
+    success: "success",
+    complete: "complete",
+    timer: "timer",
+    and: "and",
+    or: "or"
 }
 
 export interface Condition {

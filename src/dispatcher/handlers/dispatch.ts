@@ -26,7 +26,7 @@ function dispatch(limit: Object, preference: Array<Object>, priority: boolean, c
     return colc.findAndModify(flt, {
         $set: { statusId: status.processing, lastProcessTs: nowts },
         $push: { processLog: { ts: nowts, msg: `dispatched at ${utility.date.datetimeFormat(nowts)}` } },
-        $inc: { 'constraints.ttl': -1, assigned: 1 }
+        $inc: { "constraints.ttl": -1, assigned: 1 }
     }, null, true, false, { createdTs: 1 })
         .then(task => {
             if (!task) {
@@ -46,7 +46,7 @@ function dispatch(limit: Object, preference: Array<Object>, priority: boolean, c
 function dispatchFilter(limit: Object, preference: Array<Object>, priority: boolean): Object {
     const conds: Array<Object> = [{
         statusId: { $in: [status.prepared, status.timeout, status.failed] },
-        'constraints.ttl': { '$gt': 0 }
+        "constraints.ttl": { "$gt": 0 }
     }];
     if (priority) conds.push({ priority: 1 });
     if (limit) conds.push(limit);

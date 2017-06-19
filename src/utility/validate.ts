@@ -8,7 +8,7 @@ export function isStr(input: any): input is string {
 }
 
 export function isNum(input: any): input is number {
-    return typeof input === 'number';
+    return typeof input === "number";
 }
 
 export function isInt(input: any): input is number {

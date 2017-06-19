@@ -1,6 +1,6 @@
 
-import * as utility from '../utility';
-import * as def from './def';
+import * as utility from "../utility";
+import * as def from "./def";
 
 export function createMongoCollClient(connstr: string): utility.mongo.CollClient<def.Task> {
     const dbc = new utility.mongo.DbClient(connstr);

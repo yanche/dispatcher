@@ -1,7 +1,7 @@
 
-import * as mongodb from 'mongodb';
-import Hub from 'prmhub';
-import * as validate from './validate';
+import * as mongodb from "mongodb";
+import Hub from "prmhub";
+import * as validate from "./validate";
 
 export class CollClient<T> {
     private _colhub: Hub<mongodb.Collection>;
@@ -155,12 +155,12 @@ export function objIdfy(obj: any): any {
         return obj; //number, boolean
 }
 
-const charCode0 = '0'.charCodeAt(0);
-const charCode9 = '9'.charCodeAt(0);
-const charCodeAL = 'a'.charCodeAt(0);
-const charCodeFL = 'f'.charCodeAt(0);
-const charCodeAU = 'A'.charCodeAt(0);
-const charCodeFU = 'F'.charCodeAt(0);
+const charCode0 = "0".charCodeAt(0);
+const charCode9 = "9".charCodeAt(0);
+const charCodeAL = "a".charCodeAt(0);
+const charCodeFL = "f".charCodeAt(0);
+const charCodeAU = "A".charCodeAt(0);
+const charCodeFU = "F".charCodeAt(0);
 function objIdLike(str: any): boolean {
     if (str instanceof mongodb.ObjectID)
         return true;
