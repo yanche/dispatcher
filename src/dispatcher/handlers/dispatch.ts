@@ -1,7 +1,7 @@
 
 import * as koa from "koa";
 import { DataModel } from "./def";
-import { Context, Request, task, Task } from "../def";
+import { Context, Request, status, Task } from "../def";
 import * as utility from "../../utility";
 
 export default async function (ctx: Context<DispatchHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
@@ -24,7 +24,7 @@ export default async function (ctx: Context<DispatchHttpBody>, next: () => any, 
 function dispatch(limit: Object, preference: Array<Object>, priority: boolean, colc: utility.mongo.CollClient<Task>): Promise<Task> {
     const flt = dispatchFilter(limit, preference, priority), nowts = new Date().getTime();
     return colc.findAndModify(flt, {
-        $set: { statusId: task.status.processing, lastProcessTs: nowts },
+        $set: { statusId: status.processing, lastProcessTs: nowts },
         $push: { processLog: { ts: nowts, msg: `dispatched at ${utility.date.datetimeFormat(nowts)}` } },
         $inc: { 'constraints.ttl': -1, assigned: 1 }
     }, null, true, false, { createdTs: 1 })
@@ -45,7 +45,7 @@ function dispatch(limit: Object, preference: Array<Object>, priority: boolean, c
 
 function dispatchFilter(limit: Object, preference: Array<Object>, priority: boolean): Object {
     const conds: Array<Object> = [{
-        statusId: { $in: [task.status.prepared, task.status.timeout, task.status.failed] },
+        statusId: { $in: [status.prepared, status.timeout, status.failed] },
         'constraints.ttl': { '$gt': 0 }
     }];
     if (priority) conds.push({ priority: 1 });

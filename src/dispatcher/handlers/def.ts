@@ -14,3 +14,10 @@ export abstract class DataModel {
         return this._valid;
     }
 }
+export abstract class CreateDataModel<T> extends DataModel {
+    protected _mongodoc: T;
+
+    public get mongoDoc(): T {
+        return this._mongodoc;
+    }
+}
