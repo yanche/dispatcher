@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/yanche/dispatcher#readme",
   "dependencies": {
-    "koa": "^2.2.0"
+    "koa": "^2.2.0",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.28",
+    "prmhub": "^1.0.1"
   }
 }

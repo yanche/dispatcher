@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "koa": "registry:npm/koa#2.0.0+20161018080506"
+    "koa": "registry:npm/koa#2.0.0+20161018080506",
+    "mongodb": "registry:npm/mongodb#2.1.0+20170211100415"
   },
   "globalDependencies": {
     "node": "registry:dt/node#7.0.0+20170322231424"
