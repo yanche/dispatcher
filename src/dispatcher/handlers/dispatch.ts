@@ -1,5 +1,4 @@
 
-import * as koa from "koa";
 import { DataModel } from "./def";
 import { Context, Request, status, Task } from "../def";
 import * as utility from "../../utility";

@@ -1,5 +1,4 @@
 
-import * as koa from "koa";
 import { CreateDataModel } from "./def";
 import { Context, Request, status, cond, constraints, Task, Condition, Constraint } from "../def";
 import * as utility from "../../utility";

@@ -1,5 +1,5 @@
 
-export function isObj(input: any): input is object {
+export function isObj(input: any): input is Object {
     return typeof input === "object";
 }
 
@@ -17,4 +17,8 @@ export function isInt(input: any): input is number {
 
 export function pos(input: any, int?: boolean): input is number {
     return isNum(input) && input > 0 && (!int || Math.ceil(input) === input);
+}
+
+export function isBool(input: any): input is boolean {
+    return typeof input === "boolean";
 }
