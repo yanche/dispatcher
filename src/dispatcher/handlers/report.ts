@@ -51,16 +51,21 @@ class ReportModel extends DataModel {
 
     constructor(body: ReportHttpBody) {
         super();
-        this.objId = utility.mongo.convObjId(body._id);
-        this.processTs = body.processTs;
-        this.statusId = body.statusId;
-        this.recoverable = body.recoverable || false;
-        this.errmsg = body.errmsg || "";
-        this.result = body.result || null;
-        this._valid = this.objId && utility.validate.pos(this.processTs, true) && new Date(this.processTs).getTime() === this.processTs
-            && (this.statusId === status.success || this.statusId === status.failed)
-            && utility.validate.isBool(this.recoverable)
-            && utility.validate.isStr(this.errmsg);
+        if (!body) {
+            this._valid = false;
+        }
+        else {
+            this.objId = utility.mongo.convObjId(body._id);
+            this.processTs = body.processTs;
+            this.statusId = body.statusId;
+            this.recoverable = body.recoverable || false;
+            this.errmsg = body.errmsg || "";
+            this.result = body.result || null;
+            this._valid = this.objId && utility.validate.pos(this.processTs, true) && new Date(this.processTs).getTime() === this.processTs
+                && (this.statusId === status.success || this.statusId === status.failed)
+                && utility.validate.isBool(this.recoverable)
+                && utility.validate.isStr(this.errmsg);
+        }
     }
 }
 
