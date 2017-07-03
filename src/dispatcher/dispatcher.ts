@@ -1,7 +1,8 @@
 
 import * as Koa from "koa";
 import * as handlers from "./handlers";
-import * as def from "./def";
+import { Task } from "../def";
+import { Context } from "./def";
 import * as db from "./db";
 import * as utility from "../utility";
 import * as http from "http";
@@ -10,7 +11,7 @@ class Dispatcher {
     private _port: number;
     private _started: boolean;
     private _koa: Koa;
-    private _colc: utility.mongo.CollClient<def.Task>;
+    private _colc: utility.mongo.CollClient<Task>;
     private _mongoConnStr: string;
 
     constructor(port: number, mongoConnStr: string) {
@@ -32,11 +33,12 @@ class Dispatcher {
 
     private _koaInit(): Koa {
         const koa = new Koa();
-        koa.use(async (ctx: def.Context<any>, next) => {
+        koa.use(async (ctx: Context<any>, next) => {
             // parse http body
             if (ctx.is("json")) {
                 try {
-                    ctx.request.body = await getHttpJsonBody(ctx.req);
+                    const bodybuf = await utility.stream.getData(ctx.req);
+                    ctx.request.body = JSON.parse(bodybuf.toString("utf8"));
                     await next();
                 }
                 catch (err) {
@@ -64,23 +66,4 @@ class Dispatcher {
         });
         return koa;
     }
-}
-
-function getHttpJsonBody(req: http.IncomingMessage): Promise<Object> {
-    return new Promise<Object>((res, rej) => {
-        const bufs: Buffer[] = [];
-        req.on("data", (chunk: Buffer) => {
-            bufs.push(chunk);
-        }).on("end", () => {
-            try {
-                res(JSON.parse(Buffer.concat(bufs).toString("utf-8")));
-            }
-            catch (err) {
-                rej(new Error("http request body is not a valid json"));
-            }
-        }).on("error", err => {
-            console.error(err.stack);
-            rej(new Error("interal server error when reading http request data"));
-        });
-    });
 }

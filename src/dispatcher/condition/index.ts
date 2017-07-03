@@ -4,7 +4,7 @@ import success from "./success";
 import complete from "./complete";
 import ok from "./ok";
 import timer from "./timer";
-import { cond, Condition, Task } from "../def";
+import { cond, Condition, Task } from "../../def";
 import { ConditionHandler } from "./def";
 import * as utility from "../../utility";
 

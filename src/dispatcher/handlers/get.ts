@@ -1,5 +1,6 @@
 
-import { Context, Task } from "../def";
+import { Context } from "../def";
+import { Task } from "../../def";
 import * as utility from "../../utility";
 
 export async function getOne(ctx: Context<{ filter: Object; fields?: Object }>, next: () => any, colc: utility.mongo.CollClient<Task>) {

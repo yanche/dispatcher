@@ -1,10 +1,10 @@
 
 import * as utility from "../utility";
-import * as def from "./def";
+import { Task } from "../def";
 
-export function createMongoCollClient(connstr: string): utility.mongo.CollClient<def.Task> {
+export function createMongoCollClient(connstr: string): utility.mongo.CollClient<Task> {
     const dbc = new utility.mongo.DbClient(connstr);
-    return dbc.getCollClient<def.Task>(colName, taskFields);
+    return dbc.getCollClient<Task>(colName, taskFields);
 }
 
 const taskFields = {

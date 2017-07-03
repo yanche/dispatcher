@@ -1,5 +1,6 @@
 
-import { Context, Task, status } from "../def";
+import { Context } from "../def";
+import { status, Task } from "../../def";
 import { DataModel } from "./def";
 import * as utility from "../../utility";
 import * as mongodb from "mongodb";

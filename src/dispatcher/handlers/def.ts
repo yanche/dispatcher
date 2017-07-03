@@ -1,7 +1,7 @@
 
 import * as Koa from "koa";
 import * as utility from "../../utility";
-import { Task } from "../def";
+import { Task } from "../../def";
 
 export interface Handler {
     (ctx: Koa.Context, next: () => any, colc: utility.mongo.CollClient<Task>): Promise<void>;

@@ -1,6 +1,6 @@
 
 import { ConditionHandler } from "./def";
-import { Condition, Task } from "../def";
+import { Condition, Task } from "../../def";
 import * as condition from "./index";
 import * as utility from "../../utility";
 

@@ -1,5 +1,6 @@
 
-import { Context, Task, status } from "../def";
+import { Context } from "../def";
+import { status, Task } from "../../def";
 import * as utility from "../../utility";
 
 function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task, colc: utility.mongo.CollClient<Task>) => Promise<any>) {

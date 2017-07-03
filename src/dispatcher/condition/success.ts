@@ -1,6 +1,6 @@
 
 import { ConditionHandler } from "./def";
-import { Task, status } from "../def";
+import { Task, status } from "../../def";
 import * as utility from "../../utility";
 
 const success: ConditionHandler = {
