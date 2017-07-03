@@ -87,8 +87,8 @@ export interface Task {
     createdTs?: number;
     processLog?: Array<{ msg: string; ts: number; err?: string }>;
     lastProcessTs?: number;
-    // nextConditionCheckTs?: number;
-    // lastConditionCheckTs?: number;
+    nextConditionCheckTs?: number;
+    lastConditionCheckTs?: number;
     result?: Object;
     priority?: number;
     assigned?: number;

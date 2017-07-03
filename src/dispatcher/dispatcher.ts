@@ -6,6 +6,7 @@ import { Context } from "./def";
 import * as db from "./db";
 import * as utility from "../utility";
 import * as http from "http";
+import conditionInspect from "./inspector/condition";
 
 class Dispatcher {
     private _port: number;
@@ -26,8 +27,9 @@ class Dispatcher {
             throw new Error(`dispatcher already started at port: ${this._port}`);
         }
         else {
-            this._started;
+            this._started = true;
             this._koa.listen(this._port);
+            conditionInspect(this._colc, 2000); // check task pre-condition every 2s
         }
     }
 
