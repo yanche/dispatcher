@@ -7,6 +7,7 @@ import * as db from "./db";
 import * as utility from "../utility";
 import * as http from "http";
 import conditionInspect from "./inspector/condition";
+import timeoutInspect from "./inspector/timeout";
 
 class Dispatcher {
     private _port: number;
@@ -30,6 +31,7 @@ class Dispatcher {
             this._started = true;
             this._koa.listen(this._port);
             conditionInspect(this._colc, 2000); // check task pre-condition every 2s
+            timeoutInspect(this._colc, 2300); // check task timeout every 2.3s
         }
     }
 

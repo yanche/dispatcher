@@ -56,5 +56,5 @@ export default function checkPreCondition(colc: utility.mongo.CollClient<Task>, 
             console.error("unhandled error in task condition inspector");
             console.error(err.stack);
         })
-        .then(() => setTimeout(checkPreCondition, conditionCheckFreqMS));
+        .then(() => setTimeout(() => checkPreCondition(colc, conditionCheckFreqMS), conditionCheckFreqMS));
 }
