@@ -22,6 +22,19 @@ export class DispatcherClient {
         this._port = port;
     }
 
+    public getAllById(idList: Array<string | mongo.ObjectID>, fields?: Object): Promise<{ list: Array<Task> }> {
+        const pageSize = 15;
+        const pages = Math.ceil(idList.length / pageSize);
+        const result: Array<Array<Task>> = [];
+        let i = 0;
+        return utility.whileLoop(() => Promise.resolve(i < pages), () => {
+            return this.getMul({ _id: { $in: idList.slice(pageSize * i, (i + 1) * pageSize) } }, 1, pageSize, fields, null)
+                .then(data => result.push(data.list))
+                .then(() => ++i);
+        })
+            .then(() => { return { list: _.flatten(result) }; });
+    }
+
     public getMul(filter: Object, page: number, pageSize: number, fields?: Object, orderby?: Object): Promise<{ list: Array<Task>, page: number, pageSize: number, total: number }> {
         return this._expectJson<{ list: Array<Task>, page: number, pageSize: number, total: number }>({ filter: filter, fields: fields, page: page, pageSize: pageSize, orderby: orderby }, verb.GETMUL);
     }

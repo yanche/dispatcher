@@ -23,7 +23,7 @@ export default class Dispatcher {
         this._colc = db.createMongoCollClient(this._mongoConnStr = mongoConnStr);
     }
 
-    listen(): void {
+    start(): void {
         if (this._started) {
             throw new Error(`dispatcher already started at port: ${this._port}`);
         }
@@ -67,6 +67,14 @@ export default class Dispatcher {
                 await handler(ctx, next, this._colc);
                 await next();
             }
+        });
+        koa.use(async (ctx, next) => {
+            ctx.response.header["Access-Control-Allow-Credentials"] = "true";
+            ctx.response.header["Access-Control-Allow-Headers"] = "Content-Type,Verb";
+            ctx.response.header["Access-Control-Allow-Methods"] = "POST,OPTIONS";
+            ctx.response.header["Access-Control-Allow-Origin"] = "*";
+            ctx.response.header["Access-Control-Max-Age"] = "3600";
+            await next();
         });
         return koa;
     }
