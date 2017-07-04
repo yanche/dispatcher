@@ -1,0 +1,8 @@
+*.ts
+!*.d.ts
+tsconfig.json
+typings.json
+.gitignore
+node_modules
+typings
+.vscode

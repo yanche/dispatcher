@@ -5,7 +5,7 @@ import { DataModel } from "./def";
 import * as utility from "../../utility";
 import * as mongodb from "mongodb";
 
-export default async function (ctx: Context<ReportHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function report(ctx: Context<ReportHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
     const model = new ReportModel(ctx.request.body);
     if (!model.valid) {
         ctx.status = 400;
@@ -70,7 +70,7 @@ class ReportModel extends DataModel {
     }
 }
 
-interface ReportHttpBody {
+export interface ReportHttpBody {
     _id: string;
     processTs: number;
     statusId: number;

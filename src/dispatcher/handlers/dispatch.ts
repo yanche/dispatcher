@@ -4,10 +4,10 @@ import { Context, Request } from "../def";
 import { status, cond, constraints, Task, Condition, Constraint } from "../../def";
 import * as utility from "../../utility";
 
-export default async function (ctx: Context<DispatchHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function dispatch(ctx: Context<DispatchHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
     const model = new DispatchModel(ctx.request.body);
     if (model.valid) {
-        const task = await dispatch(model.limit, model.preference, true, colc);
+        const task = await _dispatch(model.limit, model.preference, true, colc);
         if (task) {
             ctx.body = task;
         }
@@ -21,7 +21,7 @@ export default async function (ctx: Context<DispatchHttpBody>, next: () => any, 
     }
 }
 
-function dispatch(limit: Object, preference: Array<Object>, priority: boolean, colc: utility.mongo.CollClient<Task>): Promise<Task> {
+function _dispatch(limit: Object, preference: Array<Object>, priority: boolean, colc: utility.mongo.CollClient<Task>): Promise<Task> {
     const flt = dispatchFilter(limit, preference, priority), nowts = new Date().getTime();
     return colc.findAndModify(flt, {
         $set: { statusId: status.processing, lastProcessTs: nowts },
@@ -31,10 +31,10 @@ function dispatch(limit: Object, preference: Array<Object>, priority: boolean, c
         .then(task => {
             if (!task) {
                 if (priority) {
-                    return dispatch(limit, preference, false, colc);
+                    return _dispatch(limit, preference, false, colc);
                 }
                 else {
-                    return preference.length > 0 ? dispatch(limit, [], false, colc) : null;
+                    return preference.length > 0 ? _dispatch(limit, [], false, colc) : null;
                 }
             }
             else {
@@ -76,7 +76,7 @@ class DispatchModel extends DataModel {
     }
 }
 
-interface DispatchHttpBody {
+export interface DispatchHttpBody {
     preference: Array<Object>;
     limit: Object;
 }

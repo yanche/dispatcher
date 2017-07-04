@@ -1,8 +1,8 @@
 {
-  "name": "dispatcher",
-  "version": "0.0.0",
+  "name": "lavria",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

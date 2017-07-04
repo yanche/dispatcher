@@ -1,16 +1,16 @@
 
 import { Context } from "../def";
 import { status, Task } from "../../def";
-import * as utility from "../../utility";
+import { CollClient, convObjId } from "../../utility/mongo";
 
-function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task, colc: utility.mongo.CollClient<Task>) => Promise<any>) {
-    return async function (ctx: Context<{ _id: string }>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task, colc: CollClient<Task>) => Promise<any>) {
+    return async function (ctx: Context<{ _id: string }>, next: () => any, colc: CollClient<Task>) {
         if (!ctx.request.body) {
             ctx.status = 400;
             ctx.message = "http body must contains task._id";
         }
         else {
-            const objId = utility.mongo.convObjId(ctx.request.body._id);
+            const objId = convObjId(ctx.request.body._id);
             if (!objId) {
                 ctx.status = 400;
                 ctx.message = "http body must contains task._id";
@@ -35,7 +35,7 @@ function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task,
 }
 
 function makeStatusUpdateHandler(validate: (task: Task) => boolean, statusId: number, msg: string, ttlrenew: boolean) {
-    return makeManageHandler(validate, async (task: Task, colc: utility.mongo.CollClient<Task>) => {
+    return makeManageHandler(validate, async (task: Task, colc: CollClient<Task>) => {
         const updateObj: any = {
             $set: { statusId: statusId, nextConditionCheckTs: null },
             $push: { processLog: { ts: new Date().getTime(), msg: msg } }
@@ -53,7 +53,7 @@ export const close = makeStatusUpdateHandler((task: Task) => {
 
 export const upgrade = makeManageHandler((task: Task) => {
     return !(task.priority > 0);
-}, async (task: Task, colc: utility.mongo.CollClient<Task>) => {
+}, async (task: Task, colc: CollClient<Task>) => {
     await colc.updateAll({ _id: task._id }, { $set: { priority: 1 }, $push: { processLog: { ts: new Date().getTime(), msg: "task was upgraded" } } }, false);
 });
 

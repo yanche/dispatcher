@@ -9,7 +9,7 @@ import * as http from "http";
 import conditionInspect from "./inspector/condition";
 import timeoutInspect from "./inspector/timeout";
 
-class Dispatcher {
+export default class Dispatcher {
     private _port: number;
     private _started: boolean;
     private _koa: Koa;

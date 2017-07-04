@@ -2,9 +2,9 @@
 import * as def from "./def";
 import * as create from "./create";
 import * as get from "./get";
-import report from "./report";
+import { report } from "./report";
 import * as manage from "./manage";
-import dispatch from "./dispatch";
+import { dispatch } from "./dispatch";
 
 export type Handler = def.Handler;
 
