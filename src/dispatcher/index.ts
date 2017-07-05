@@ -39,9 +39,9 @@ export default class Dispatcher {
         const koa = new Koa();
         koa.use(async (ctx: Context<any>, next) => {
             // parse http body
+            const bodybuf = await utility.stream.getData(ctx.req);
             if (ctx.is("json")) {
                 try {
-                    const bodybuf = await utility.stream.getData(ctx.req);
                     ctx.request.body = JSON.parse(bodybuf.toString("utf8"));
                     await next();
                 }
@@ -51,8 +51,7 @@ export default class Dispatcher {
                 }
             }
             else {
-                ctx.status = 400;
-                ctx.message = `content type is not acceptable: ${ctx.header["content-type"]}`;
+                ctx.request.body = bodybuf;
             }
         });
         koa.use(async (ctx, next) => {
