@@ -48,10 +48,16 @@ export async function getMul(ctx: Context<{ filter: Object; fields?: Object, ord
         }
         else {
             const _flt = utility.mongo.objIdfy(filter);
-            ctx.body = await Promise.all([
+            const data = await Promise.all([
                 colc.getMul(_flt, fields, orderby, (page - 1) * pageSize, pageSize),
                 colc.count(_flt)
             ]);
+            ctx.body = {
+                list: data[0],
+                total: data[1],
+                page: page,
+                pageSize: pageSize
+            };
             await next();
         }
     }

@@ -37,6 +37,17 @@ export default class Dispatcher {
 
     private _koaInit(): Koa {
         const koa = new Koa();
+        koa.use(async (ctx, next) => {
+            ctx.status = 200; // set default status code return to 200 instead of 404
+            if (ctx.method.toUpperCase() !== "OPTIONS") {
+                await next();
+            }
+            ctx.set("Access-Control-Allow-Credentials", "true");
+            ctx.set("Access-Control-Allow-Headers", "Content-Type,Verb");
+            ctx.set("Access-Control-Allow-Methods", "POST,OPTIONS");
+            ctx.set("Access-Control-Allow-Origin", "*");
+            ctx.set("Access-Control-Max-Age", "3600");
+        });
         koa.use(async (ctx: Context<any>, next) => {
             // parse http body
             const bodybuf = await utility.stream.getData(ctx.req);
@@ -52,6 +63,7 @@ export default class Dispatcher {
             }
             else {
                 ctx.request.body = bodybuf;
+                await next();
             }
         });
         koa.use(async (ctx, next) => {
@@ -64,16 +76,7 @@ export default class Dispatcher {
             }
             else {
                 await handler(ctx, next, this._colc);
-                await next();
             }
-        });
-        koa.use(async (ctx, next) => {
-            ctx.response.header["Access-Control-Allow-Credentials"] = "true";
-            ctx.response.header["Access-Control-Allow-Headers"] = "Content-Type,Verb";
-            ctx.response.header["Access-Control-Allow-Methods"] = "POST,OPTIONS";
-            ctx.response.header["Access-Control-Allow-Origin"] = "*";
-            ctx.response.header["Access-Control-Max-Age"] = "3600";
-            await next();
         });
         return koa;
     }

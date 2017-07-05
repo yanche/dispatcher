@@ -58,11 +58,12 @@ class TaskCreateModel extends CreateDataModel<Task> {
             lastProcessTs: null,
             result: null,
             priority: 0,
-            assigned: 0
+            assigned: 0,
+            locality: body.locality || null
         };
         this._valid = mdoc._id && condition.validate(mdoc.condition) && validateConstraints(mdoc.constraints)
             && utility.validate.isObj(mdoc.action) && utility.validate.isStr(mdoc.action.type)
-            && utility.validate.isStr(mdoc.comments);
+            && utility.validate.isStr(mdoc.comments) && (mdoc.locality === null || utility.validate.isObj(mdoc.locality));
         if (this._valid) {
             mdoc.statusId = newTaskStatusByCondition(mdoc.condition);
         }
