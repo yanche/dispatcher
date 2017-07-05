@@ -18,7 +18,7 @@ export async function report(ctx: Context<ReportHttpBody>, next: () => any, colc
             ctx.message = "task not found";
         }
         else {
-            if (task.statusId !== status.processing || task.statusId !== status.timeout) {
+            if (task.statusId !== status.processing && task.statusId !== status.timeout) {
                 ctx.status = 401;
                 ctx.message = `task status: ${task.statusId} is neither processing nor timeout`;
             }

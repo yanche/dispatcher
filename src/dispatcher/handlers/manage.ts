@@ -16,7 +16,7 @@ function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task,
                 ctx.message = "http body must contains task._id";
             }
             else {
-                const task = await colc.getOne({ _id: objId }, { statusId: 1 });
+                const task = await colc.getOne({ _id: objId });
                 if (!task) {
                     ctx.status = 404;
                     ctx.message = "task not found";

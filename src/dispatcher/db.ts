@@ -21,7 +21,7 @@ const taskFields = {
     lastProcessTs: 1,
     nextConditionCheckTs: 1,
     lastConditionCheckTs: 1,
-    quickview: 1,
+    result: 1,
     priority: 1,
     assigned: 1, //count of assignment
 }

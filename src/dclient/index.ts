@@ -154,8 +154,17 @@ export class DispatcherClient {
                     .catch(reject);
             })
                 .on("aborted", () => reject(new Error("client request was aborted by server")))
-                .on("error", reject)
-                .end(body && utility.validate.isObj(body) ? JSON.stringify(body) : body);
+                .on("error", reject);
+            if (body && utility.validate.isObj(body)) {
+                req.setHeader("Content-Type", "application/json");
+                req.end(JSON.stringify(body));
+            }
+            else {
+                if (utility.validate.isStr(body)) {
+                    req.setHeader("Content-Type", "text/plain");
+                }
+                req.end(body);
+            }
         });
     }
 }
