@@ -11,6 +11,7 @@ export interface TaskCreation {
     condition?: Condition;
     constraints?: Constraint;
     comments?: string;
+    locality?: Object;
 }
 
 export class DispatcherClient {
@@ -171,6 +172,7 @@ function refineTaskCreationArg(task: TaskCreation): TaskCreation {
         action: task.action,
         condition: task.condition || { type: cond.ok },
         constraints: task.constraints || { timeoutLevel: constraints.timeoutLevel.long.code, conditionCheckInterval: constraints.conditionCheckInterval.short.code, ttl: 1 },
-        comments: task.comments
+        comments: task.comments,
+        locality: task.locality || null
     }
 }

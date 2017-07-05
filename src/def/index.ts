@@ -92,6 +92,7 @@ export interface Task {
     result?: Object;
     priority?: number;
     assigned?: number;
+    locality?: Object;
 }
 
 export const verb = {
