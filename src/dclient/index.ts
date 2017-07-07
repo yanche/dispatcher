@@ -1,5 +1,5 @@
 
-import { Task, Action, Condition, Constraint, cond, constraints, verb } from "../def";
+import { Task, Action, Condition, Constraint, cond, constraints, verb, DispatchAsk } from "../def";
 import * as mongo from "mongodb";
 import * as utility from "../utility";
 import * as http from "http";
@@ -65,7 +65,7 @@ export class DispatcherClient {
             })
     }
 
-    public dispatch(data: { limit: Object, preference: Array<Object> }): Promise<Task> {
+    public dispatch(data: DispatchAsk): Promise<Task> {
         return this._req(data, verb.DISPATCH)
             .then(reply => {
                 if (reply.statusCode == 404) {

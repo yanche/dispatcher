@@ -107,3 +107,10 @@ export const verb = {
     RENEW: "RENEW",
     MAKEREADY: "MAKEREADY"
 }
+
+export interface DispatchAsk {
+    // mongo filter
+    limit: Object;
+    // array of mongo filter, will be concatenated by $or operator
+    preference: Array<Object>;
+}

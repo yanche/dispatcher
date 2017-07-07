@@ -1,10 +1,10 @@
 
 import { DataModel } from "./def";
 import { Context, Request } from "../def";
-import { status, cond, constraints, Task, Condition, Constraint } from "../../def";
+import { status, cond, constraints, Task, Condition, Constraint, DispatchAsk } from "../../def";
 import * as utility from "../../utility";
 
-export async function dispatch(ctx: Context<DispatchHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function dispatch(ctx: Context<DispatchAsk>, next: () => any, colc: utility.mongo.CollClient<Task>) {
     const model = new DispatchModel(ctx.request.body);
     if (model.valid) {
         const task = await _dispatch(model.limit, model.preference, true, colc);
@@ -65,7 +65,7 @@ class DispatchModel extends DataModel {
     public limit: Object;
     public preference: Array<Object>;
 
-    constructor(body: DispatchHttpBody) {
+    constructor(body: DispatchAsk) {
         super();
         this._valid = (!this.preference || (Array.isArray(this.preference) && this.preference.every(utility.validate.isObj)))
             && (!this.limit || utility.validate.isObj(this.limit));
@@ -74,9 +74,4 @@ class DispatchModel extends DataModel {
             this.limit = body.limit;
         }
     }
-}
-
-export interface DispatchHttpBody {
-    preference: Array<Object>;
-    limit: Object;
 }
