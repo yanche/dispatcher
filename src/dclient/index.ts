@@ -3,7 +3,6 @@ import { Task, Action, Condition, Constraint, cond, constraints, verb, DispatchA
 import * as mongo from "mongodb";
 import * as utility from "../utility";
 import * as http from "http";
-import * as _ from "lodash";
 
 export interface TaskCreation {
     _id?: string | mongo.ObjectID;
@@ -33,7 +32,7 @@ export class DispatcherClient {
                 .then(data => result.push(data.list))
                 .then(() => ++i);
         })
-            .then(() => { return { list: _.flatten(result) }; });
+            .then(() => { return { list: utility.array.flatten(result) }; });
     }
 
     public getMul(filter: Object, page: number, pageSize: number, fields?: Object, orderby?: Object): Promise<{ list: Array<Task>, page: number, pageSize: number, total: number }> {
@@ -60,7 +59,7 @@ export class DispatcherClient {
         })
             .then(() => {
                 return {
-                    list: _.flatten(ret)
+                    list: utility.array.flatten(ret)
                 };
             })
     }
@@ -147,7 +146,7 @@ export class DispatcherClient {
                     .then(buf => {
                         resolve({
                             statusCode: res.statusCode,
-                            headers: res.headers,
+                            headers: <{ [key: string]: string }>res.headers,
                             data: buf
                         });
                     })
@@ -170,9 +169,9 @@ export class DispatcherClient {
 }
 
 interface WebReqReturn {
-    statusCode: number,
-    headers: { [key: string]: string },
-    data: Buffer
+    statusCode: number;
+    headers: { [key: string]: string };
+    data: Buffer;
 }
 
 function refineTaskCreationArg(task: TaskCreation): TaskCreation {

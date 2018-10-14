@@ -8,3 +8,7 @@ export function unique<T>(arr: Array<T>): Array<T> {
     }
     return ret;
 }
+
+export function flatten<T>(arr: Array<Array<T>>):Array<T> {
+    return Array.prototype.concat.apply([], arr);
+}

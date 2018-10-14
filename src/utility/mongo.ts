@@ -1,7 +1,8 @@
 
 import * as mongodb from "mongodb";
-import Hub from "prmhub";
+import { Hub } from "@belongs/asyncutil";
 import * as validate from "./validate";
+import * as url from "url";
 
 export class CollClient<T> {
     private _colhub: Hub<mongodb.Collection>;
@@ -122,9 +123,14 @@ export class DbClient {
         this._connstr = connstr;
         this._dbhub = new Hub<mongodb.Db>(() => {
             return new Promise<mongodb.Db>((res, rej) => {
-                mongodb.MongoClient.connect(connstr, (err: Error, db: mongodb.Db) => {
-                    if (err != null) rej(err);
-                    else res(db);
+                mongodb.MongoClient.connect(connstr, (err: Error, client: mongodb.MongoClient) => {
+                    if (err) rej(err);
+                    else {
+                        // pathname starts with "/"
+                        const path = url.parse(connstr).pathname;
+                        const dbName = path[0] === "/" ? path.slice(1) : path;
+                        res(client.db(dbName));
+                    }
                 })
             });
         })

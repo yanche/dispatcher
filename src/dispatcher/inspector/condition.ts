@@ -2,7 +2,7 @@
 import * as utility from "../../utility";
 import { constraints, status, Task } from "../../def";
 import * as condition from "../condition";
-import roll from "croll";
+import { roll } from "@belongs/asyncutil";
 
 function getConditionCheckInterval(code: number): number {
     switch (code) {
