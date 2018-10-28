@@ -11,6 +11,7 @@ export interface TaskCreation {
     constraints?: Constraint;
     comments?: string;
     locality?: Object;
+    priority?: 1 | 0;
 }
 
 export class DispatcherClient {

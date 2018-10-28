@@ -3,3 +3,4 @@ typings
 *.js
 *.d.ts
 *.tgz
+package-lock.json

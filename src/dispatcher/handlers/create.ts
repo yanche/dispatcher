@@ -1,6 +1,6 @@
 
 import { CreateDataModel } from "./def";
-import { Context, Request } from "../def";
+import { Context } from "../def";
 import { status, cond, constraints, Task, Condition, Constraint } from "../../def";
 import * as utility from "../../utility";
 import * as condition from "../condition";
@@ -57,13 +57,14 @@ class TaskCreateModel extends CreateDataModel<Task> {
             processLog: [{ msg: "newly created", ts: nowTs }],
             lastProcessTs: null,
             result: null,
-            priority: 0,
+            priority: body.priority || 0,
             assigned: 0,
             locality: body.locality || null
         };
         this._valid = mdoc._id && condition.validate(mdoc.condition) && validateConstraints(mdoc.constraints)
             && utility.validate.isObj(mdoc.action) && utility.validate.isStr(mdoc.action.type)
-            && utility.validate.isStr(mdoc.comments) && (mdoc.locality === null || utility.validate.isObj(mdoc.locality));
+            && utility.validate.isStr(mdoc.comments) && (mdoc.locality === null || utility.validate.isObj(mdoc.locality))
+            && (mdoc.priority === 1 || mdoc.priority === 0);
         if (this._valid) {
             mdoc.statusId = newTaskStatusByCondition(mdoc.condition);
         }
