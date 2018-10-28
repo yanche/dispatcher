@@ -3,6 +3,7 @@ import * as utility from "../../utility";
 import { constraints, status, Task } from "../../def";
 import * as condition from "../condition";
 import { roll } from "@belongs/asyncutil";
+import { CollClient } from "@belongs/mongoutil";
 
 function getConditionCheckInterval(code: number): number {
     switch (code) {
@@ -19,7 +20,7 @@ function getConditionCheckInterval(code: number): number {
     }
 }
 
-export default function checkPreCondition(colc: utility.mongo.CollClient<Task>, conditionCheckFreqMS: number) {
+export default function checkPreCondition(colc: CollClient<Task>, conditionCheckFreqMS: number) {
     console.log("now inspecting the task pre-condition");
     Promise.all([
         colc.getMul({ statusId: status.new }, { condition: 1, _id: 1, constraints: 1 }, null, 0, 20),

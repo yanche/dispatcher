@@ -2,8 +2,9 @@
 import { Context } from "../def";
 import { Task } from "../../def";
 import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 
-export async function getOne(ctx: Context<{ filter: Object; fields?: Object }>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function getOne(ctx: Context<{ filter: Object; fields?: Object }>, next: () => any, colc: CollClient<Task>) {
     const body = ctx.request.body || { filter: {}, fields: null };
     if (!utility.validate.isObj(body)) {
         ctx.status = 400;
@@ -29,7 +30,7 @@ export async function getOne(ctx: Context<{ filter: Object; fields?: Object }>, 
     }
 }
 
-export async function getMul(ctx: Context<{ filter: Object; fields?: Object, orderby?: Object, page: number, pageSize: number }>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function getMul(ctx: Context<{ filter: Object; fields?: Object, orderby?: Object, page: number, pageSize: number }>, next: () => any, colc: CollClient<Task>) {
     const body = ctx.request.body || { filter: {}, fields: null, orderby: null, page: 1, pageSize: 15 };
     if (!utility.validate.isObj(body)) {
         ctx.status = 400;

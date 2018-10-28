@@ -2,14 +2,14 @@
 import { ConditionHandler } from "./def";
 import { Condition, Task } from "../../def";
 import * as condition from "./index";
-import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 
 function validate(pack: Array<Condition>): boolean {
     return Array.isArray(pack) && pack.length > 1 && pack.every(condition.validate);
 }
 
 const and: ConditionHandler = {
-    resolve(pack: Array<Condition>, colc: utility.mongo.CollClient<Task>): Promise<boolean> {
+    resolve(pack: Array<Condition>, colc: CollClient<Task>): Promise<boolean> {
         if (validate(pack)) {
             return Promise.all(pack.map(p => condition.resolve(p, colc))).then(d => d.every(x => x === true));
         }
@@ -21,7 +21,7 @@ const and: ConditionHandler = {
 }
 
 const or: ConditionHandler = {
-    resolve(pack: Array<Condition>, colc: utility.mongo.CollClient<Task>): Promise<boolean> {
+    resolve(pack: Array<Condition>, colc: CollClient<Task>): Promise<boolean> {
         if (validate(pack)) {
             return Promise.all(pack.map(p => condition.resolve(p, colc))).then(d => d.some(x => x === true));
         }

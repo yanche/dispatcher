@@ -4,8 +4,9 @@ import { Context } from "../def";
 import { status, cond, constraints, Task, Condition, Constraint } from "../../def";
 import * as utility from "../../utility";
 import * as condition from "../condition";
+import { CollClient } from "@belongs/mongoutil";
 
-export async function createOne(ctx: Context<Task>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function createOne(ctx: Context<Task>, next: () => any, colc: CollClient<Task>) {
     const model = new TaskCreateModel(ctx.request.body);
     if (model.valid) {
         const objId = await colc.createOne(model.mongoDoc);
@@ -18,7 +19,7 @@ export async function createOne(ctx: Context<Task>, next: () => any, colc: utili
     }
 }
 
-export async function createMul(ctx: Context<{ list: Task[] }>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function createMul(ctx: Context<{ list: Task[] }>, next: () => any, colc: CollClient<Task>) {
     if (!ctx.request.body || !Array.isArray(ctx.request.body.list) || ctx.request.body.list.length === 0) {
         ctx.state = 400;
         ctx.message = "invalid http body to create tasks";

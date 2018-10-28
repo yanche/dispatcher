@@ -5,7 +5,7 @@ import { Task } from "../def";
 import { Context } from "./def";
 import * as db from "./db";
 import * as utility from "../utility";
-import * as http from "http";
+import { CollClient } from "@belongs/mongoutil";
 import conditionInspect from "./inspector/condition";
 import timeoutInspect from "./inspector/timeout";
 
@@ -13,14 +13,13 @@ export default class Dispatcher {
     private _port: number;
     private _started: boolean;
     private _koa: Koa;
-    private _colc: utility.mongo.CollClient<Task>;
-    private _mongoConnStr: string;
+    private _colc: CollClient<Task>;
 
     constructor(port: number, mongoConnStr: string) {
         this._port = port;
         this._started = false;
         this._koa = this._koaInit();
-        this._colc = db.createMongoCollClient(this._mongoConnStr = mongoConnStr);
+        this._colc = db.createMongoCollClient(mongoConnStr);
     }
 
     start(): void {

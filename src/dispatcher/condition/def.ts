@@ -1,8 +1,8 @@
 
-import * as utility from "../../utility";
 import { Task } from "../../def";
+import { CollClient } from "@belongs/mongoutil";
 
 export interface ConditionHandler {
-    resolve(pack: any, colc: utility.mongo.CollClient<Task>): Promise<boolean>;
+    resolve(pack: any, colc: CollClient<Task>): Promise<boolean>;
     validate(pack: any): boolean;
 }

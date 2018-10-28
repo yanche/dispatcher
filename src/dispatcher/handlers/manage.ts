@@ -1,7 +1,8 @@
 
 import { Context } from "../def";
 import { status, Task } from "../../def";
-import { CollClient, convObjId } from "../../utility/mongo";
+import { convObjId } from "../../utility/mongo";
+import { CollClient } from "@belongs/mongoutil";
 
 function makeManageHandler(validate: (task: Task) => boolean, work: (task: Task, colc: CollClient<Task>) => Promise<any>) {
     return async function (ctx: Context<{ _id: string }>, next: () => any, colc: CollClient<Task>) {

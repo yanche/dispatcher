@@ -1,10 +1,11 @@
 
 import { DataModel } from "./def";
-import { Context, Request } from "../def";
-import { status, cond, constraints, Task, Condition, Constraint, DispatchAsk } from "../../def";
+import { Context } from "../def";
+import { status, Task, DispatchAsk } from "../../def";
 import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 
-export async function dispatch(ctx: Context<DispatchAsk>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function dispatch(ctx: Context<DispatchAsk>, next: () => any, colc: CollClient<Task>) {
     const model = new DispatchModel(ctx.request.body);
     if (model.valid) {
         const task = await _dispatch(model.limit, model.preference, true, colc);
@@ -21,13 +22,18 @@ export async function dispatch(ctx: Context<DispatchAsk>, next: () => any, colc:
     }
 }
 
-function _dispatch(limit: Object, preference: Array<Object>, priority: boolean, colc: utility.mongo.CollClient<Task>): Promise<Task> {
+function _dispatch(limit: Object, preference: Array<Object>, priority: boolean, colc: CollClient<Task>): Promise<Task> {
     const flt = dispatchFilter(limit, preference, priority), nowts = new Date().getTime();
-    return colc.findAndModify(flt, {
-        $set: { statusId: status.processing, lastProcessTs: nowts },
-        $push: { processLog: { ts: nowts, msg: `dispatched at ${utility.date.datetimeFormat(nowts)}` } },
-        $inc: { "constraints.ttl": -1, assigned: 1 }
-    }, null, true, false, { createdTs: 1 })
+    return colc.findAndModify(flt,
+        {
+            $set: { statusId: status.processing, lastProcessTs: nowts },
+            $push: { processLog: { ts: nowts, msg: `dispatched at ${utility.date.datetimeFormat(nowts)}` } },
+            $inc: { "constraints.ttl": -1, assigned: 1 }
+        }, {
+            returnnew: true,
+            upsert: false,
+            sort: { createdTs: 1 }
+        })
         .then(task => {
             if (!task) {
                 if (priority) {

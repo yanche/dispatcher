@@ -1,10 +1,10 @@
 
 import * as Koa from "koa";
-import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 import { Task } from "../../def";
 
 export interface Handler {
-    (ctx: Koa.Context, next: () => any, colc: utility.mongo.CollClient<Task>): Promise<void>;
+    (ctx: Koa.Context, next: () => any, colc: CollClient<Task>): Promise<void>;
 }
 
 export abstract class DataModel {

@@ -4,8 +4,9 @@ import { status, Task } from "../../def";
 import { DataModel } from "./def";
 import * as utility from "../../utility";
 import * as mongodb from "mongodb";
+import { CollClient } from "@belongs/mongoutil";
 
-export async function report(ctx: Context<ReportHttpBody>, next: () => any, colc: utility.mongo.CollClient<Task>) {
+export async function report(ctx: Context<ReportHttpBody>, next: () => any, colc: CollClient<Task>) {
     const model = new ReportModel(ctx.request.body);
     if (!model.valid) {
         ctx.status = 400;

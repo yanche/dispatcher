@@ -2,9 +2,10 @@
 import { ConditionHandler } from "./def";
 import { Task, status } from "../../def";
 import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 
 const success: ConditionHandler = {
-    resolve(pack: Array<string> | string, colc: utility.mongo.CollClient<Task>): Promise<boolean> {
+    resolve(pack: Array<string> | string, colc: CollClient<Task>): Promise<boolean> {
         return Promise.resolve()
             .then(() => {
                 if (!success.validate(pack)) throw new Error("condition.success, bad input");

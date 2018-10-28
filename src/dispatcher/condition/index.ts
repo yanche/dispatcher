@@ -6,9 +6,9 @@ import ok from "./ok";
 import timer from "./timer";
 import { cond, Condition, Task } from "../../def";
 import { ConditionHandler } from "./def";
-import * as utility from "../../utility";
+import { CollClient } from "@belongs/mongoutil";
 
-export async function resolve(cond: Condition, colc: utility.mongo.CollClient<Task>): Promise<boolean> {
+export async function resolve(cond: Condition, colc: CollClient<Task>): Promise<boolean> {
     const condhandler = condmap.get(cond.type);
     if (!condhandler) {
         throw new Error(`condition not found for type: ${cond.type}`);

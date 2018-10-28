@@ -1,8 +1,8 @@
 
-import * as utility from "../../utility";
 import { constraints, status, Task } from "../../def";
+import { CollClient } from "@belongs/mongoutil";
 
-export default function checkTimeout(colc: utility.mongo.CollClient<Task>, timeoutCheckFreqMS: number) {
+export default function checkTimeout(colc: CollClient<Task>, timeoutCheckFreqMS: number) {
     console.log("now inspecting the task timeout");
     const nowts = new Date().getTime();
     Promise.all([
@@ -11,9 +11,9 @@ export default function checkTimeout(colc: utility.mongo.CollClient<Task>, timeo
             "constraints.timeoutLevel": c.code,
             lastProcessTs: { $lt: nowts - c.ms }
         }, {
-            $set: { statusId: status.timeout },
-            $push: { processLog: { ts: nowts, msg: "task timeout" } }
-        }, false))),
+                $set: { statusId: status.timeout },
+                $push: { processLog: { ts: nowts, msg: "task timeout" } }
+            }, false))),
         colc.updateAll({ statusId: status.timeout, "constraints.ttl": 0 }, { $set: { statusId: status.failed }, $push: { processLog: { ts: nowts, msg: "mark ttl zero and timeout task to failure" } } }, false)
     ])
         .catch((err: Error) => {
