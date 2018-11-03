@@ -182,6 +182,7 @@ function refineTaskCreationArg(task: TaskCreation): TaskCreation {
         condition: task.condition || { type: cond.ok },
         constraints: task.constraints || { timeoutLevel: constraints.timeoutLevel.long.code, conditionCheckInterval: constraints.conditionCheckInterval.short.code, ttl: 1 },
         comments: task.comments,
-        locality: task.locality || null
+        locality: task.locality || null,
+        priority: task.priority,
     }
 }
