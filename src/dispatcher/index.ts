@@ -18,14 +18,20 @@ export default class Dispatcher {
     private _started: boolean;
 
     private readonly _port: number;
-    private readonly _httpsCertPath: string;
+    private readonly _httpsCertPath: Readonly<{
+        key: string;
+        cert: string;
+    }>;
     private readonly _app: Koa;
     private readonly _colc: CollClient<Task>;
 
     constructor(options: Readonly<{
         port: number;
         mongoConnStr: string;
-        httpsCertPath?: string;
+        httpsCertPath?: Readonly<{
+            key: string;
+            cert: string;
+        }>;
         mongoOptions?: MongoClientOptions;
     }>) {
         this._port = options.port;
@@ -42,11 +48,9 @@ export default class Dispatcher {
         else {
             this._started = true;
             if (this._httpsCertPath) {
-                const baseDir = path.isAbsolute(this._httpsCertPath) ? this._httpsCertPath : path.join(process.cwd(), this._httpsCertPath);
                 https.createServer({
-                    key: fs.readFileSync(path.join(baseDir, "privkey.pem"), "utf8"),
-                    cert: fs.readFileSync(path.join(baseDir, "cert.pem"), "utf8"),
-                    ca: fs.readFileSync(path.join(baseDir, "chain.pem"), "utf8")
+                    key: readFileSync(this._httpsCertPath.key),
+                    cert: readFileSync(this._httpsCertPath.cert),
                 }, this._app.callback()).listen(this._port);
             } else {
                 http.createServer(this._app.callback()).listen(this._port);
@@ -101,4 +105,9 @@ export default class Dispatcher {
         });
         return app;
     }
+}
+
+function readFileSync(filepath: string): string {
+    const absPath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
+    return fs.readFileSync(absPath, "utf8");
 }
