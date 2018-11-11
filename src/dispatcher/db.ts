@@ -1,9 +1,10 @@
 
 import { Task } from "../def";
 import { CollClient, DbClient } from "@belongs/mongoutil";
+import { MongoClientOptions } from "mongodb";
 
-export function createMongoCollClient(connstr: string): CollClient<Task> {
-    const dbc = new DbClient(connstr);
+export function createMongoCollClient(connstr: string, options?: MongoClientOptions): CollClient<Task> {
+    const dbc = new DbClient(connstr, options);
     return dbc.getCollClient<Task>(colName, taskFields);
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@belongs/dispatcher",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "",
   "scripts": {
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/yanche/dispatcher#readme",
   "dependencies": {
     "@belongs/asyncutil": "0.0.1",
-    "@belongs/mongoutil": "0.0.4",
+    "@belongs/mongoutil": "0.0.5",
     "@types/koa": "^2.0.46",
     "@types/mongodb": "^3.1.12",
     "@types/node": "^10.11.7",

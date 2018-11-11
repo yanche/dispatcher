@@ -8,6 +8,7 @@ import * as utility from "../utility";
 import { CollClient } from "@belongs/mongoutil";
 import conditionInspect from "./inspector/condition";
 import timeoutInspect from "./inspector/timeout";
+import { MongoClientOptions } from "mongodb";
 
 export default class Dispatcher {
     private _port: number;
@@ -15,11 +16,11 @@ export default class Dispatcher {
     private _koa: Koa;
     private _colc: CollClient<Task>;
 
-    constructor(port: number, mongoConnStr: string) {
+    constructor(port: number, mongoConnStr: string, mongoOptions?: MongoClientOptions) {
         this._port = port;
         this._started = false;
         this._koa = this._koaInit();
-        this._colc = db.createMongoCollClient(mongoConnStr);
+        this._colc = db.createMongoCollClient(mongoConnStr, mongoOptions);
     }
 
     start(): void {
