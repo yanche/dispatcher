@@ -3,6 +3,7 @@ import { Task, Action, Condition, Constraint, cond, constraints, verb, DispatchA
 import * as mongo from "mongodb";
 import * as utility from "../utility";
 import * as http from "http";
+import * as https from "https";
 
 export interface TaskCreation {
     _id?: string | mongo.ObjectID;
@@ -15,12 +16,22 @@ export interface TaskCreation {
 }
 
 export class DispatcherClient {
-    private _host: string;
-    private _port: number;
-    private _createMulPageSize = 200;
-    constructor(host: string, port: number) {
-        this._host = host;
-        this._port = port;
+    private readonly _useHTTPS: boolean;
+    private readonly _ignoreInvalidHttpsCert: boolean;
+    private readonly _host: string;
+    private readonly _port: number;
+    private readonly _createMulPageSize = 200;
+
+    constructor(options: Readonly<{
+        host: string;
+        port: number;
+        useHTTPS?: boolean;
+        ignoreInvalidHttpsCert?: boolean;
+    }>) {
+        this._host = options.host;
+        this._port = options.port;
+        this._useHTTPS = options.useHTTPS || false;
+        this._ignoreInvalidHttpsCert = options.ignoreInvalidHttpsCert || false;
     }
 
     public getAllById(idList: Array<string | mongo.ObjectID>, fields?: Object): Promise<{ list: Array<Task> }> {
@@ -136,12 +147,13 @@ export class DispatcherClient {
 
     private _req(body: Object | Buffer | string, verb: string): Promise<WebReqReturn> {
         return new Promise<WebReqReturn>((resolve, reject) => {
-            const req = http.request({
+            const req = (this._useHTTPS ? https.request : http.request)({
                 method: "POST",
                 headers: { verb: verb },
                 path: "/",
                 host: this._host,
                 port: this._port,
+                rejectUnauthorized: !this._ignoreInvalidHttpsCert,
             }, res => {
                 utility.stream.getData(res)
                     .then(buf => {

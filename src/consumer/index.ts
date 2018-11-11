@@ -8,19 +8,27 @@ export interface ConsumeAction {
 }
 
 export class Consumer {
-    private _req: () => Promise<DispatchAsk>;
-    private _client: DispatcherClient;
-    private _idol: Idol;
-    private _act: ConsumeAction;
     private _started: boolean;
     private _stopping: Promise<void>;
     private _stopres: () => void;
 
-    constructor(host: string, port: number, requirement: () => Promise<DispatchAsk>, consumeAct: ConsumeAction) {
-        this._req = requirement;
-        this._client = new DispatcherClient(host, port);
+    private readonly _req: () => Promise<DispatchAsk>;
+    private readonly _client: DispatcherClient;
+    private readonly _idol: Idol;
+    private readonly _act: ConsumeAction;
+
+    constructor(options: Readonly<{
+        host: string;
+        port: number;
+        useHTTPS?: boolean;
+        ignoreInvalidHttpsCert?: boolean;
+        requirement: () => Promise<DispatchAsk>;
+        consumeAct: ConsumeAction
+    }>) {
+        this._req = options.requirement;
+        this._client = new DispatcherClient(options);
         this._idol = new Idol();
-        this._act = consumeAct;
+        this._act = options.consumeAct;
         this._started = false;
         this._stopping = this._stopres = null;
     }
