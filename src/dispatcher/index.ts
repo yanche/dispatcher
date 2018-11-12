@@ -11,16 +11,15 @@ import timeoutInspect from "./inspector/timeout";
 import { MongoClientOptions } from "mongodb";
 import * as https from "https";
 import * as http from "http";
-import * as fs from "fs";
-import * as path from "path";
 
 export default class Dispatcher {
     private _started: boolean;
 
     private readonly _port: number;
-    private readonly _httpsCertPath: Readonly<{
+    private readonly _httpsCert: Readonly<{
         key: string;
         cert: string;
+        ca?: string;
     }>;
     private readonly _app: Koa;
     private readonly _colc: CollClient<Task>;
@@ -28,14 +27,15 @@ export default class Dispatcher {
     constructor(options: Readonly<{
         port: number;
         mongoConnStr: string;
-        httpsCertPath?: Readonly<{
+        httpsCert?: Readonly<{
             key: string;
             cert: string;
+            ca?: string;
         }>;
         mongoOptions?: MongoClientOptions;
     }>) {
         this._port = options.port;
-        this._httpsCertPath = options.httpsCertPath;
+        this._httpsCert = options.httpsCert;
         this._started = false;
         this._app = this._koaInit();
         this._colc = db.createMongoCollClient(options.mongoConnStr, options.mongoOptions);
@@ -47,10 +47,11 @@ export default class Dispatcher {
         }
         else {
             this._started = true;
-            if (this._httpsCertPath) {
+            if (this._httpsCert) {
                 https.createServer({
-                    key: readFileSync(this._httpsCertPath.key),
-                    cert: readFileSync(this._httpsCertPath.cert),
+                    key: this._httpsCert.key,
+                    cert: this._httpsCert.cert,
+                    ca: this._httpsCert.ca,
                 }, this._app.callback()).listen(this._port);
             } else {
                 http.createServer(this._app.callback()).listen(this._port);
@@ -105,9 +106,4 @@ export default class Dispatcher {
         });
         return app;
     }
-}
-
-function readFileSync(filepath: string): string {
-    const absPath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
-    return fs.readFileSync(absPath, "utf8");
 }
