@@ -4,7 +4,7 @@ import { DispatchAsk, Action, Task, status } from "../def";
 import * as utility from "../utility";
 
 export interface ConsumeAction {
-    (action: Action, task: Task): Promise<any>;
+    (action: Action, task: Task, dclient: DispatcherClient): Promise<any>;
 }
 
 export class Consumer {
@@ -12,10 +12,10 @@ export class Consumer {
     private _stopping: Promise<void>;
     private _stopres: () => void;
 
-    private readonly _req: () => Promise<DispatchAsk>;
+    private readonly _consumerRequirement: () => Promise<DispatchAsk>;
     private readonly _client: DispatcherClient;
     private readonly _idol: Idol;
-    private readonly _act: ConsumeAction;
+    private readonly _consumerAction: ConsumeAction;
 
     constructor(options: Readonly<{
         host: string;
@@ -25,10 +25,10 @@ export class Consumer {
         requirement: () => Promise<DispatchAsk>;
         consumeAct: ConsumeAction
     }>) {
-        this._req = options.requirement;
+        this._consumerRequirement = options.requirement;
         this._client = new DispatcherClient(options);
         this._idol = new Idol();
-        this._act = options.consumeAct;
+        this._consumerAction = options.consumeAct;
         this._started = false;
         this._stopping = this._stopres = null;
     }
@@ -46,6 +46,7 @@ export class Consumer {
                     .catch((err: Error) => {
                         console.error(`unhandled error in consumer: ${err.message}`);
                         console.error(err.stack);
+                        that._idol.breakMore();
                     })
                     .then(() => {
                         if (that._stopping) {
@@ -76,38 +77,52 @@ export class Consumer {
         }
     }
 
-    private _work(): Promise<void> {
-        return Promise.resolve<void>(null)
-            .then(this._req)
-            .then(req => this._client.dispatch(req))
-            .then(task => {
-                if (!task) {
-                    console.log("no task from dispatcher, now waiting");
-                    this._idol.breakMore();
-                }
-                else {
-                    this._idol.hurry();
-                    return this._act(task.action, task)
-                        .then(result => {
-                            return this._client.report({ processTs: task.lastProcessTs, statusId: status.success, _id: task._id, result: result })
-                                .then(() => {
-                                    console.info(`task finished: ${task._id}, ${task.comments}`);
-                                }, (err: Error) => {
-                                    console.error(` !!!CRITICAL!!! failed to report task success to server: ${err.message}`);
-                                    console.error(err.stack);
-                                });
-                        }, (err: Error) => {
-                            console.error(err.stack);
-                            return this._client.report({ processTs: task.lastProcessTs, statusId: status.failed, errmsg: err.stack, _id: task._id })
-                                .then(() => {
-                                    console.info(`task failed: ${task._id}, ${task.comments}`);
-                                }, (err: Error) => {
-                                    console.error(` !!!CRITICAL!!! failed to report task failure to server: ${err.message}`);
-                                    console.error(err.stack);
-                                });
-                        });
-                }
-            });
+    private async _work(): Promise<void> {
+        let task: Task;
+
+        try {
+            const requirement = await this._consumerRequirement();
+            task = await this._client.dispatch(requirement);
+        }
+        catch (err) {
+            console.error(err.stack);
+            console.log("failed to get a task from dispatcher");
+            this._idol.breakMore();
+            return;
+        }
+
+        if (!task) {
+            console.log("no task from dispatcher, now waiting");
+            this._idol.breakMore();
+            return;
+        }
+
+        this._idol.hurry();
+
+        try {
+            const result = await this._consumerAction(task.action, task, this._client);
+            try {
+                await this._client.report({ processTs: task.lastProcessTs, statusId: status.success, _id: task._id, result: result })
+                console.info(`task finished: ${task._id}, ${task.comments}`);
+            }
+            catch (err) {
+                // the task may be marked as timeout at dispatcher server
+                console.error(`!!!CRITICAL!!! failed to report task success to server: ${err.message}`);
+                console.error(err.stack);
+            };
+        }
+        catch (err) {
+            console.error(err.stack);
+            try {
+                await this._client.report({ processTs: task.lastProcessTs, statusId: status.failed, errmsg: err.stack, _id: task._id });
+                console.info(`task failed: ${task._id}, ${task.comments}`);
+            }
+            catch (err) {
+                // the task may be marked as timeout at dispatcher server
+                console.error(`!!!CRITICAL!!! failed to report task failure to server: ${err.message}`);
+                console.error(err.stack);
+            }
+        }
     }
 }
 
